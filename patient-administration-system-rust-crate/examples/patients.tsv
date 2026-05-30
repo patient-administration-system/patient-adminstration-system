@@ -1,0 +1,4 @@
+id	mrn	family_name	given_names	gender	birth_date	phone	email	line1	city	postal_code	country	active
+11111111-1111-4111-8111-111111111111	MRN-001	Doe	Jane Marie	female	1990-01-15	+1-555-0100	jane.doe@example.com	123 Elm Street	Springfield	62701	US	true
+22222222-2222-4222-8222-222222222222	MRN-002	Smith	John	male	1985-07-22	+1-555-0200	john.smith@example.com	456 Oak Avenue	Springfield	62702	US	true
+33333333-3333-4333-8333-333333333333	MRN-003	O'Brien	Mary Elizabeth	female	1972-11-03	+1-555-0300	mary.obrien@example.com	789 Pine Road, Apt 4	Boston	02108	US	true

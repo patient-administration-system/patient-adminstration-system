@@ -1,0 +1,110 @@
+{# Markup follows the Lily Design System headless HTML component conventions:
+   `header`, `footer`, `panel`, `data-table*`, `badge`, `alert`, `code`.
+   Lily ships zero CSS — every rule below is the consumer-provided styling
+   that the components expect us to supply. See ~/git/lilydesignsystem for
+   the full component library. #}
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PAS — Ops dashboard</title>
+<script src="https://unpkg.com/htmx.org@2.0.3" integrity="sha384-0895/pl2MU10Hqc6jd4RvrthNlDiE9U1tWmX7WRESftEDRosgxNsQG/Ze9YMRzHq" crossorigin="anonymous" defer></script>
+<style>
+  :root {
+    --fg: #1a1a1a;
+    --muted: #6b7280;
+    --bg: #fafafa;
+    --panel: #ffffff;
+    --border: #e5e7eb;
+    --accent: #2563eb;
+    --warn: #d97706;
+    --error: #dc2626;
+    --ok: #16a34a;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; padding: 24px; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: var(--bg); color: var(--fg); }
+
+  /* Lily `header` — page header strip. */
+  .header { display: flex; align-items: baseline; gap: 16px; margin-bottom: 24px; padding-bottom: 12px; border-bottom: 1px solid var(--border); }
+  .header h1 { margin: 0; font-size: 22px; }
+  .header .meta { color: var(--muted); font-size: 13px; }
+
+  /* Page grid wrapping the panels. */
+  .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; }
+  @media (max-width: 900px) { .grid { grid-template-columns: 1fr; } }
+
+  /* Lily `panel` — region container. We layer `.panel-body` as the HTMX
+     swap target inside each panel; that's an app convention, not a Lily
+     component. */
+  .panel { background: var(--panel); border: 1px solid var(--border); border-radius: 8px; padding: 16px; }
+  .panel h2 { margin: 0 0 12px; font-size: 14px; text-transform: uppercase; letter-spacing: 0.04em; color: var(--muted); display: flex; align-items: center; gap: 8px; }
+  .panel h2 .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--ok); display: inline-block; opacity: 0; transition: opacity 0.4s; }
+  .panel.htmx-request h2 .dot { opacity: 1; }
+
+  /* Lily `data-table` family. */
+  .data-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .data-table-th, .data-table-td { text-align: left; padding: 6px 8px; border-bottom: 1px solid var(--border); }
+  .data-table-th { color: var(--muted); font-weight: 500; }
+  .data-table-body .data-table-row:last-child .data-table-td { border-bottom: none; }
+  .num { font-variant-numeric: tabular-nums; text-align: right; }
+
+  /* Lily `badge` — status indicator. We use `data-status` to keep the
+     primary class clean while still styling by state. */
+  .badge { display: inline-block; padding: 2px 8px; border-radius: 999px; font-size: 12px; background: #f1f5f9; color: var(--fg); }
+  .badge[data-status="ok"] { background: #dcfce7; color: var(--ok); }
+  .badge[data-status="warn"] { background: #fef3c7; color: var(--warn); }
+  .badge[data-status="error"] { background: #fee2e2; color: var(--error); }
+
+  /* Lily `alert` — used here for the empty-state messages inside panels. */
+  .alert { color: var(--muted); font-style: italic; padding: 8px 0; }
+
+  .stat { display: flex; align-items: baseline; gap: 8px; }
+  .stat-value { font-size: 28px; font-weight: 600; font-variant-numeric: tabular-nums; }
+  .stat-label { color: var(--muted); font-size: 13px; }
+
+  /* Lily `code` — inline code spans. */
+  .code { background: #f1f5f9; padding: 1px 5px; border-radius: 3px; font-size: 12px; }
+
+  /* Lily `footer` — page footer strip. */
+  .footer { margin-top: 24px; color: var(--muted); font-size: 12px; text-align: center; }
+</style>
+</head>
+<body>
+
+<header class="header" aria-label="Dashboard header">
+  <h1>PAS ops dashboard</h1>
+  <span class="meta">v{{ version }}</span>
+  <span class="meta" style="margin-left:auto;">live · {{ refresh_seconds }}s refresh</span>
+</header>
+
+<div class="grid">
+
+  <div class="panel" role="region" aria-label="Ward occupancy" hx-get="/dashboard/wards" hx-trigger="load, every {{ refresh_seconds }}s" hx-swap="innerHTML show:no-scroll" hx-target="find .panel-body">
+    <h2>Ward occupancy <span class="dot"></span></h2>
+    <div class="panel-body">{{ wards_html | safe }}</div>
+  </div>
+
+  <div class="panel" role="region" aria-label="RTT breaches" hx-get="/dashboard/breaches" hx-trigger="load, every {{ refresh_seconds }}s" hx-swap="innerHTML show:no-scroll" hx-target="find .panel-body">
+    <h2>RTT breaches <span class="dot"></span></h2>
+    <div class="panel-body">{{ breaches_html | safe }}</div>
+  </div>
+
+  <div class="panel" role="region" aria-label="Outbox status" hx-get="/dashboard/outbox" hx-trigger="load, every {{ refresh_seconds }}s" hx-swap="innerHTML show:no-scroll" hx-target="find .panel-body">
+    <h2>Outbox <span class="dot"></span></h2>
+    <div class="panel-body">{{ outbox_html | safe }}</div>
+  </div>
+
+  <div class="panel" role="region" aria-label="Recent audit" hx-get="/dashboard/audit" hx-trigger="load, every {{ refresh_seconds }}s" hx-swap="innerHTML show:no-scroll" hx-target="find .panel-body">
+    <h2>Recent audit <span class="dot"></span></h2>
+    <div class="panel-body">{{ audit_html | safe }}</div>
+  </div>
+
+</div>
+
+<footer class="footer" aria-label="Dashboard footer">
+  PAS v{{ version }} · server-side Tera + HTMX live-refresh · markup from Lily Design System · rendered {{ rendered_at }}
+</footer>
+
+</body>
+</html>

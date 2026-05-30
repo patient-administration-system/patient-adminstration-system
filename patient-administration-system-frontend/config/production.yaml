@@ -1,0 +1,47 @@
+# Loco-rs configuration — production.
+
+logger:
+  enable: true
+  pretty_backtrace: false
+  level: info
+  format: json
+
+server:
+  port: "{{ get_env(name="PORT", default="5150") }}"
+  binding: 0.0.0.0
+  host: "{{ get_env(name="HOST", default="https://pas.example.com") }}"
+  middlewares:
+    static:
+      enable: true
+      must_exist: true
+      folder:
+        uri: "/static"
+        path: "assets/static"
+      precompressed: true
+    compression:
+      enable: true
+    cors:
+      enable: true
+    trace:
+      enable: true
+
+database:
+  uri: "{{ get_env(name="DATABASE_URL") }}"
+  enable_logging: false
+  connect_timeout: 10000
+  idle_timeout: 30000
+  min_connections: 2
+  max_connections: 20
+  auto_migrate: false
+  dangerously_truncate: false
+  dangerously_recreate: false
+
+mailer:
+  smtp:
+    enable: false
+
+queue:
+  kind: Null
+
+workers:
+  mode: BackgroundQueue

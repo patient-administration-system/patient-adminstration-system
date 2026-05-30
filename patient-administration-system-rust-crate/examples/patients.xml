@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<patients>
+  <patient>
+    <id>11111111-1111-4111-8111-111111111111</id>
+    <mrn>MRN-001</mrn>
+    <family_name>Doe</family_name>
+    <given_names>Jane Marie</given_names>
+    <gender>female</gender>
+    <birth_date>1990-01-15</birth_date>
+    <phone>+1-555-0100</phone>
+    <email>jane.doe@example.com</email>
+    <line1>123 Elm Street</line1>
+    <city>Springfield</city>
+    <postal_code>62701</postal_code>
+    <country>US</country>
+    <active>true</active>
+  </patient>
+  <patient>
+    <id>22222222-2222-4222-8222-222222222222</id>
+    <mrn>MRN-002</mrn>
+    <family_name>Smith</family_name>
+    <given_names>John</given_names>
+    <gender>male</gender>
+    <birth_date>1985-07-22</birth_date>
+    <phone>+1-555-0200</phone>
+    <email>john.smith@example.com</email>
+    <line1>456 Oak Avenue</line1>
+    <city>Springfield</city>
+    <postal_code>62702</postal_code>
+    <country>US</country>
+    <active>true</active>
+  </patient>
+  <patient>
+    <id>33333333-3333-4333-8333-333333333333</id>
+    <mrn>MRN-003</mrn>
+    <family_name>O'Brien</family_name>
+    <given_names>Mary Elizabeth</given_names>
+    <gender>female</gender>
+    <birth_date>1972-11-03</birth_date>
+    <phone>+1-555-0300</phone>
+    <email>mary.obrien@example.com</email>
+    <line1>789 Pine Road, Apt 4</line1>
+    <city>Boston</city>
+    <postal_code>02108</postal_code>
+    <country>US</country>
+    <active>true</active>
+  </patient>
+</patients>

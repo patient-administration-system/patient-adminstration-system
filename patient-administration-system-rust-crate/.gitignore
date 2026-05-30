@@ -1,0 +1,6 @@
+/target
+/migrations/target
+/.claude
+.env
+*.swp
+.DS_Store

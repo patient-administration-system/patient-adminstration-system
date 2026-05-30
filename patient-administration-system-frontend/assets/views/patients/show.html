@@ -1,0 +1,55 @@
+{% extends "layouts/main.html" %}
+{% block title %}PAS — Patient {{ patient.family }}{% endblock %}
+
+{% block content %}
+
+<div class="panel" role="region" aria-label="Patient detail">
+  <h2>{{ patient.given }} {{ patient.family }}
+    {% if patient.deceased %}<span class="badge" data-status="error" aria-label="Deceased">deceased</span>
+    {% elif patient.active %}<span class="badge" data-status="ok" aria-label="Active">active</span>
+    {% else %}<span class="badge" aria-label="Inactive">inactive</span>{% endif %}
+  </h2>
+
+  <table class="data-table" aria-label="Patient details">
+    <tbody class="data-table-body">
+      <tr class="data-table-row">
+        <th class="data-table-th" scope="row">Patient id</th>
+        <td class="data-table-td"><code class="code">{{ patient.id }}</code></td>
+      </tr>
+      <tr class="data-table-row">
+        <th class="data-table-th" scope="row">MRN</th>
+        <td class="data-table-td">{% if patient.mrn %}<code class="code">{{ patient.mrn }}</code>{% else %}—{% endif %}</td>
+      </tr>
+      <tr class="data-table-row">
+        <th class="data-table-th" scope="row">Gender</th>
+        <td class="data-table-td">{{ patient.gender }}</td>
+      </tr>
+      <tr class="data-table-row">
+        <th class="data-table-th" scope="row">Birth date</th>
+        <td class="data-table-td">{{ patient.birth_date | default(value="—") }}</td>
+      </tr>
+      <tr class="data-table-row">
+        <th class="data-table-th" scope="row">Marital status</th>
+        <td class="data-table-td">{{ patient.marital_status | default(value="—") }}</td>
+      </tr>
+      <tr class="data-table-row">
+        <th class="data-table-th" scope="row">Phone</th>
+        <td class="data-table-td">{{ patient.primary_phone | default(value="—") }}</td>
+      </tr>
+      <tr class="data-table-row">
+        <th class="data-table-th" scope="row">Email</th>
+        <td class="data-table-td">{{ patient.primary_email | default(value="—") }}</td>
+      </tr>
+      <tr class="data-table-row">
+        <th class="data-table-th" scope="row">Address</th>
+        <td class="data-table-td">{{ patient.primary_address | default(value="—") }}</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p style="margin-top:16px;">
+    <a href="/patients">&larr; Back to patient list</a>
+  </p>
+</div>
+
+{% endblock %}

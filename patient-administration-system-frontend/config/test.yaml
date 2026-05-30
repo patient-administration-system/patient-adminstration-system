@@ -1,0 +1,35 @@
+# Loco-rs configuration — test.
+
+logger:
+  enable: false
+  level: error
+  format: compact
+
+server:
+  port: 0
+  binding: 127.0.0.1
+  host: http://localhost
+  middlewares:
+    static:
+      enable: false
+
+database:
+  uri: "{{ get_env(name="DATABASE_URL", default="postgres://pas:pas_dev_password@localhost:5432/pas_test") }}"
+  enable_logging: false
+  connect_timeout: 5000
+  idle_timeout: 5000
+  min_connections: 1
+  max_connections: 2
+  auto_migrate: false
+  dangerously_truncate: false
+  dangerously_recreate: false
+
+mailer:
+  smtp:
+    enable: false
+
+queue:
+  kind: Null
+
+workers:
+  mode: BackgroundQueue

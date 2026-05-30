@@ -1,0 +1,82 @@
+{% extends "layouts/main.html" %}
+{% block title %}PAS — Compose letter{% endblock %}
+
+{% block content %}
+
+<div class="panel" role="region" aria-label="Compose letter">
+  <h2>Compose letter</h2>
+
+  {% if error %}
+    <div class="alert" role="alert" data-status="error" style="color:var(--error);font-style:normal;">
+      <strong>Couldn't generate letter:</strong> {{ error }}
+    </div>
+  {% endif %}
+
+  {% if result %}
+    <div class="alert" role="status" data-status="ok" style="color:var(--ok);font-style:normal;">
+      <strong>Generated</strong> — <code class="code">{{ result.id }}</code> · channel <span class="badge" data-status="ok">{{ result.channel }}</span> · status <span class="badge" data-status="ok">{{ result.status }}</span>
+    </div>
+    <table class="data-table" aria-label="Rendered letter" style="margin-top:8px;">
+      <tbody class="data-table-body">
+        <tr class="data-table-row">
+          <th class="data-table-th" scope="row" style="width:120px;">Subject</th>
+          <td class="data-table-td"><strong>{{ result.subject }}</strong></td>
+        </tr>
+        <tr class="data-table-row">
+          <th class="data-table-th" scope="row">Body</th>
+          <td class="data-table-td"><pre style="white-space:pre-wrap;margin:0;font-family:inherit;">{{ result.body }}</pre></td>
+        </tr>
+      </tbody>
+    </table>
+  {% endif %}
+
+  {% if templates | length == 0 %}
+    <div class="alert" role="status">No active letter templates — create one via <code class="code">POST /api/letter-templates</code> on the PAS Axum server.</div>
+  {% else %}
+    <form class="form" method="post" action="/letters/new" style="margin-top:16px;display:grid;gap:12px;max-width:520px;">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+
+      <div class="field">
+        <label class="label" for="template_id" style="display:block;font-size:13px;color:var(--muted);">Template</label>
+        <select class="select" id="template_id" name="template_id" required style="width:100%;padding:6px 8px;">
+          {% for t in templates %}
+            <option value="{{ t.id }}">{{ t.name }} · <em>{{ t.subject }}</em></option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="field">
+        <label class="label" for="patient_id" style="display:block;font-size:13px;color:var(--muted);">Patient</label>
+        <select class="select" id="patient_id" name="patient_id" required style="width:100%;padding:6px 8px;">
+          {% for p in patients %}
+            <option value="{{ p.id }}">{{ p.family }}, {{ p.given }}{% if p.birth_date %} · {{ p.birth_date }}{% endif %}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="field">
+        <label class="label" for="channel" style="display:block;font-size:13px;color:var(--muted);">Delivery channel</label>
+        <select class="select" id="channel" name="channel" required style="width:100%;padding:6px 8px;">
+          <option value="print">Print</option>
+          <option value="email">Email</option>
+        </select>
+      </div>
+
+      <div>
+        <button class="submit-input button" type="submit" style="padding:8px 16px;background:var(--accent);color:white;border:none;border-radius:4px;cursor:pointer;">
+          Generate letter
+        </button>
+        <span style="margin-left:8px;color:var(--muted);font-size:12px;">
+          Submits to <code class="code">POST /api/letters/generate</code> on the PAS Axum API.
+        </span>
+      </div>
+
+    </form>
+  {% endif %}
+
+  <p style="margin-top:16px;">
+    <a href="/dashboard">&larr; Back to dashboard</a>
+  </p>
+</div>
+
+{% endblock %}

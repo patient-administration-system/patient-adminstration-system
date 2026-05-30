@@ -1,0 +1,65 @@
+{% extends "layouts/main.html" %}
+{% block title %}PAS — New admission{% endblock %}
+
+{% block content %}
+
+<div class="panel" role="region" aria-label="New admission">
+  <h2>New admission</h2>
+
+  {% if error %}
+    <div class="alert" role="alert" data-status="error" style="color:var(--error);font-style:normal;">
+      <strong>Couldn't admit:</strong> {{ error }}
+    </div>
+  {% endif %}
+
+  {% if result %}
+    <div class="alert" role="status" data-status="ok" style="color:var(--ok);font-style:normal;">
+      <strong>Admitted</strong> — admission <code class="code">{{ result.admission_id }}</code> · encounter <code class="code">{{ result.encounter_id }}</code> ·
+      <a href="/patients/{{ result.patient_id }}">view patient</a>
+    </div>
+  {% endif %}
+
+  {% if beds | length == 0 %}
+    <div class="alert" role="status">No available beds — every bed is currently occupied, reserved, cleaning, or out of service.</div>
+  {% elif patients | length == 0 %}
+    <div class="alert" role="status">No patients yet — create one via <code class="code">POST /api/patients</code> on the PAS Axum server.</div>
+  {% else %}
+    <form class="form" method="post" action="/admissions/new" style="margin-top:16px;display:grid;gap:12px;max-width:520px;">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+
+      <div class="field">
+        <label class="label" for="patient_id" style="display:block;font-size:13px;color:var(--muted);">Patient</label>
+        <select class="select" id="patient_id" name="patient_id" required style="width:100%;padding:6px 8px;">
+          {% for p in patients %}
+            <option value="{{ p.id }}">{{ p.family }}, {{ p.given }}{% if p.birth_date %} · {{ p.birth_date }}{% endif %}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="field">
+        <label class="label" for="bed_id" style="display:block;font-size:13px;color:var(--muted);">Bed</label>
+        <select class="select" id="bed_id" name="bed_id" required style="width:100%;padding:6px 8px;">
+          {% for b in beds %}
+            <option value="{{ b.id }}">{{ b.ward_code }} · {{ b.room_code }} · {{ b.name }} ({{ b.code }})</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div>
+        <button class="submit-input button" type="submit" style="padding:8px 16px;background:var(--accent);color:white;border:none;border-radius:4px;cursor:pointer;">
+          Admit patient
+        </button>
+        <span style="margin-left:8px;color:var(--muted);font-size:12px;">
+          Submits to <code class="code">POST /api/admissions</code> on the PAS Axum API.
+        </span>
+      </div>
+
+    </form>
+  {% endif %}
+
+  <p style="margin-top:16px;">
+    <a href="/dashboard">&larr; Back to dashboard</a>
+  </p>
+</div>
+
+{% endblock %}

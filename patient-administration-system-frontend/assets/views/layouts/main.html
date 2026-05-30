@@ -1,0 +1,87 @@
+{# Base layout. Lily Design System headless markup + page-level styling. #}
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>{% block title %}PAS{% endblock %}</title>
+<script src="https://unpkg.com/htmx.org@2.0.3" integrity="sha384-0895/pl2MU10Hqc6jd4RvrthNlDiE9U1tWmX7WRESftEDRosgxNsQG/Ze9YMRzHq" crossorigin="anonymous" defer></script>
+<style>
+  :root {
+    --fg: #1a1a1a;
+    --muted: #6b7280;
+    --bg: #fafafa;
+    --panel: #ffffff;
+    --border: #e5e7eb;
+    --accent: #2563eb;
+    --warn: #d97706;
+    --error: #dc2626;
+    --ok: #16a34a;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; padding: 24px; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: var(--bg); color: var(--fg); }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  /* Lily `header` / `footer` — page chrome. */
+  .header { display: flex; align-items: baseline; gap: 16px; margin-bottom: 24px; padding-bottom: 12px; border-bottom: 1px solid var(--border); }
+  .header h1 { margin: 0; font-size: 22px; }
+  .header .meta { color: var(--muted); font-size: 13px; }
+  .header nav { display: flex; gap: 16px; }
+  .footer { margin-top: 24px; color: var(--muted); font-size: 12px; text-align: center; }
+
+  /* Page grid + Lily `panel`. */
+  .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; }
+  @media (max-width: 900px) { .grid { grid-template-columns: 1fr; } }
+  .panel { background: var(--panel); border: 1px solid var(--border); border-radius: 8px; padding: 16px; }
+  .panel h2 { margin: 0 0 12px; font-size: 14px; text-transform: uppercase; letter-spacing: 0.04em; color: var(--muted); display: flex; align-items: center; gap: 8px; }
+  .panel h2 .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--ok); display: inline-block; opacity: 0; transition: opacity 0.4s; }
+  .panel.htmx-request h2 .dot { opacity: 1; }
+
+  /* Lily `data-table` family. */
+  .data-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .data-table-th, .data-table-td { text-align: left; padding: 6px 8px; border-bottom: 1px solid var(--border); }
+  .data-table-th { color: var(--muted); font-weight: 500; }
+  .data-table-body .data-table-row:last-child .data-table-td { border-bottom: none; }
+  .num { font-variant-numeric: tabular-nums; text-align: right; }
+
+  /* Lily `badge`. */
+  .badge { display: inline-block; padding: 2px 8px; border-radius: 999px; font-size: 12px; background: #f1f5f9; color: var(--fg); }
+  .badge[data-status="ok"] { background: #dcfce7; color: var(--ok); }
+  .badge[data-status="warn"] { background: #fef3c7; color: var(--warn); }
+  .badge[data-status="error"] { background: #fee2e2; color: var(--error); }
+
+  /* Lily `alert` — used for empty states + inline diagnostics. */
+  .alert { color: var(--muted); font-style: italic; padding: 8px 0; }
+
+  /* Lily `code`. */
+  .code { background: #f1f5f9; padding: 1px 5px; border-radius: 3px; font-size: 12px; font-family: monospace; }
+
+  .stat { display: flex; align-items: baseline; gap: 8px; }
+  .stat-value { font-size: 28px; font-weight: 600; font-variant-numeric: tabular-nums; }
+  .stat-label { color: var(--muted); font-size: 13px; }
+</style>
+</head>
+<body>
+
+<header class="header" aria-label="Site header">
+  <h1>PAS</h1>
+  <nav aria-label="Primary navigation">
+    <a href="/dashboard">Dashboard</a>
+    <a href="/patients">Patients</a>
+    <a href="/rtt">RTT</a>
+    <a href="/admissions/new">Admit</a>
+    <a href="/appointments/new">Book</a>
+    <a href="/letters/new">Compose</a>
+  </nav>
+  <span class="meta" style="margin-left:auto;">v{{ version }}</span>
+</header>
+
+{% block content %}{% endblock %}
+
+<footer class="footer" aria-label="Site footer">
+  Lily Design System markup · Loco-rs + Tera + HTMX · {{ rendered_at | default(value="") }}
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,35 @@
+{
+  "resourceType": "Patient",
+  "id": "11111111-1111-4111-8111-111111111111",
+  "active": true,
+  "name": [
+    {
+      "use": "official",
+      "family": "Doe",
+      "given": ["Jane", "Marie"]
+    }
+  ],
+  "gender": "female",
+  "birthDate": "1990-01-15",
+  "telecom": [
+    { "system": "phone", "value": "+1-555-0100", "use": "home" },
+    { "system": "email", "value": "jane.doe@example.com", "use": "home" }
+  ],
+  "address": [
+    {
+      "use": "home",
+      "line": ["123 Elm Street"],
+      "city": "Springfield",
+      "state": "IL",
+      "postalCode": "62701",
+      "country": "US"
+    }
+  ],
+  "identifier": [
+    {
+      "system": "urn:oid:facility:1",
+      "value": "MRN-001",
+      "use": "official"
+    }
+  ]
+}

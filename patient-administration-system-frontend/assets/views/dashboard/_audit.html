@@ -1,0 +1,24 @@
+{% if audit | length == 0 %}
+  <div class="alert" role="status">No audit entries yet.</div>
+{% else %}
+  <table class="data-table" aria-label="Recent audit entries">
+    <thead class="data-table-head">
+      <tr class="data-table-row">
+        <th class="data-table-th" scope="col">When</th>
+        <th class="data-table-th" scope="col">Entity</th>
+        <th class="data-table-th" scope="col">Action</th>
+        <th class="data-table-th" scope="col">User</th>
+      </tr>
+    </thead>
+    <tbody class="data-table-body">
+      {% for a in audit %}
+      <tr class="data-table-row">
+        <td class="data-table-td">{{ a.at_short }}</td>
+        <td class="data-table-td"><code class="code">{{ a.entity_type }}</code></td>
+        <td class="data-table-td"><span class="badge" data-status="ok" aria-label="Audit action">{{ a.action }}</span></td>
+        <td class="data-table-td">{{ a.user_id | default(value="—") }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% endif %}

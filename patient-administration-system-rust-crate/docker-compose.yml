@@ -1,0 +1,47 @@
+# docker-compose.yml — local development stack.
+#
+# Brings up:
+#   - postgres: PostgreSQL 18 with a named volume for persistence.
+#   - pas-server: the PAS server, built from ./Dockerfile, waiting for the
+#     database healthcheck before starting.
+#
+# Usage:
+#   docker compose up --build
+#   docker compose down            # stop containers, keep volume
+#   docker compose down -v         # stop and wipe data
+
+services:
+  postgres:
+    image: postgres:18
+    environment:
+      POSTGRES_USER: pas
+      POSTGRES_PASSWORD: pas_dev_password
+      POSTGRES_DB: pas
+    ports:
+      - "5432:5432"
+    volumes:
+      - pas_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U pas"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  pas-server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      DATABASE_URL: postgres://pas:pas_dev_password@postgres:5432/pas
+      SERVER_HOST: 0.0.0.0
+      SERVER_PORT: 8080
+      SEARCH_INDEX_PATH: /tmp/pas_search
+      RUST_LOG: info
+    depends_on:
+      postgres:
+        condition: service_healthy
+    ports:
+      - "8080:8080"
+
+volumes:
+  pas_pgdata:

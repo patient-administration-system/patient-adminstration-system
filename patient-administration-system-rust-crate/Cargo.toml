@@ -1,0 +1,104 @@
+[package]
+name = "patient-administration-system"
+version = "0.43.0"
+edition = "2024"
+authors = ["joel@joelparkerhenderson.com"]
+description = "Patient Administration System (PAS) - A hospital patient administration system covering ADT, scheduling, waitlists, resources, communications, and billing"
+license = "MIT OR Apache-2.0 OR BSD-3-Clause OR GPL-2.0-only OR GPL-3.0-only"
+repository = "https://github.com/patient-administration-system/patient-administration-system-rust-crate"
+keywords = ["healthcare", "pas", "fhir", "hl7", "admin"]
+categories = ["science", "database"]
+
+[dependencies]
+# Async Runtime
+tokio = { version = "1.49", features = ["full"] }
+
+# Web Framework & HTTP
+axum = { version = "0.7", features = ["macros"] }
+tower = { version = "0.5", features = ["util"] }
+tower-http = { version = "0.6", features = ["cors", "trace", "compression-full"] }
+
+# Serialization
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+quick-xml = { version = "0.36", features = ["serialize"] }
+csv = "1.3"
+
+# Database (PostgreSQL ORM)
+sea-orm = { version = "1.1", features = ["sqlx-postgres", "runtime-tokio-rustls", "macros", "with-chrono", "with-uuid", "with-json"] }
+sea-orm-migration = { version = "1.1", features = ["sqlx-postgres", "runtime-tokio-rustls"] }
+
+# Templating
+tera = "1.20"
+
+# Search Engine
+tantivy = "0.22"
+
+# OpenAPI Documentation
+utoipa = { version = "5.4", features = ["axum_extras", "chrono", "uuid"] }
+utoipa-swagger-ui = { version = "8.1", features = ["axum"] }
+
+# Observability — `tracing-subscriber` reads `RUST_LOG`. When `OTLP_ENDPOINT`
+# is set, `observability::init` also wires an OpenTelemetry OTLP exporter
+# (HTTP/protobuf transport via reqwest, no tonic). Wired in v0.7.0.
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter", "json"] }
+opentelemetry = "0.27"
+opentelemetry_sdk = { version = "0.27", features = ["rt-tokio"] }
+opentelemetry-otlp = { version = "0.27", default-features = false, features = ["http-proto", "reqwest-client"] }
+tracing-opentelemetry = "0.28"
+
+# Utilities
+uuid = { version = "1.19", features = ["v4", "serde"] }
+chrono = { version = "0.4", features = ["serde"] }
+thiserror = "2.0"
+dotenvy = "0.15"
+async-trait = "0.1"
+
+# Money / Decimal arithmetic
+rust_decimal = { version = "1.36", features = ["serde-with-str"] }
+
+# Outbox webhook publisher (v0.14). `reqwest` is already in the dep tree via
+# `opentelemetry-otlp` with the `reqwest-client` feature; promoting it to a
+# direct dep adds zero compile cost. `sha2` + `hmac` are already pulled in
+# transitively by sqlx (via rsa/jsonwebtoken); promoting them costs nothing.
+reqwest = { version = "0.12", default-features = false, features = ["json", "rustls-tls"] }
+sha2 = "0.10"
+hmac = "0.12"
+
+[dev-dependencies]
+# Testing
+assertables = "9.8"
+tempfile = "3.24"
+
+# Integration tests
+migration = { path = "migrations", package = "patient-administration-system-migrations" }
+
+# Benchmarking
+criterion = { version = "0.5", features = ["html_reports", "async_tokio"] }
+
+[[bin]]
+name = "patient-administration-system"
+path = "src/main.rs"
+
+[[bin]]
+name = "pas-seed"
+path = "src/bin/seed.rs"
+
+[[example]]
+name = "interchange"
+path = "examples/interchange.rs"
+
+[[bench]]
+name = "adt_bench"
+harness = false
+
+[[bench]]
+name = "scheduling_bench"
+harness = false
+
+[[bench]]
+name = "waitlist_bench"
+harness = false
+
+# [profile.release] and [profile.bench] hoisted to the workspace root.

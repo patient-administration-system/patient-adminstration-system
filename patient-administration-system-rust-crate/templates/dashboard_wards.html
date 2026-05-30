@@ -1,0 +1,31 @@
+{# Lily Design System: data-table family + badge. #}
+{% if wards | length == 0 %}
+  <div class="alert" role="status">No wards configured yet — bootstrap one via <code class="code">POST /api/facilities</code> + <code class="code">POST /api/wards</code>.</div>
+{% else %}
+  <table class="data-table" aria-label="Ward occupancy">
+    <thead class="data-table-head">
+      <tr class="data-table-row">
+        <th class="data-table-th" scope="col">Ward</th>
+        <th class="data-table-th num" scope="col">Beds</th>
+        <th class="data-table-th num" scope="col">Occupied</th>
+        <th class="data-table-th num" scope="col">Available</th>
+        <th class="data-table-th num" scope="col">Other</th>
+      </tr>
+    </thead>
+    <tbody class="data-table-body">
+      {% for w in wards %}
+      <tr class="data-table-row">
+        <td class="data-table-td"><strong>{{ w.name }}</strong> <span class="meta" style="color:var(--muted);">{{ w.code }}</span></td>
+        <td class="data-table-td num">{{ w.total_beds }}</td>
+        <td class="data-table-td num">
+          {% if w.occupied > 0 %}<span class="badge" data-status="warn" aria-label="Occupied beds">{{ w.occupied }}</span>{% else %}{{ w.occupied }}{% endif %}
+        </td>
+        <td class="data-table-td num">
+          {% if w.available > 0 %}<span class="badge" data-status="ok" aria-label="Available beds">{{ w.available }}</span>{% else %}0{% endif %}
+        </td>
+        <td class="data-table-td num">{{ w.other }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% endif %}

@@ -1,0 +1,20 @@
+[package]
+name = "patient-administration-system-migrations"
+version = "0.1.0"
+edition = "2024"
+publish = false
+
+[lib]
+name = "migration"
+path = "src/lib.rs"
+
+[[bin]]
+name = "pas-migrate"
+path = "src/main.rs"
+
+[dependencies]
+async-trait = "0.1"
+sea-orm-migration = { version = "1.1", features = ["sqlx-postgres", "runtime-tokio-rustls"] }
+tokio = { version = "1.49", features = ["full"] }
+dotenvy = "0.15"
+sea-orm = { version = "1.1", features = ["sqlx-postgres", "runtime-tokio-rustls", "macros"] }

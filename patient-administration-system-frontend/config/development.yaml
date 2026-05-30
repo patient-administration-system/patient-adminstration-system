@@ -1,0 +1,50 @@
+# Loco-rs configuration — development.
+# Reach the same Postgres database the PAS Axum binary writes to.
+
+logger:
+  enable: true
+  pretty_backtrace: true
+  level: debug
+  format: compact
+
+server:
+  port: 5150
+  binding: 0.0.0.0
+  host: http://localhost
+  middlewares:
+    static:
+      enable: true
+      must_exist: true
+      folder:
+        uri: "/static"
+        path: "assets/static"
+      precompressed: false
+    compression:
+      enable: true
+    cors:
+      enable: true
+    trace:
+      enable: true
+
+# Bring your own DATABASE_URL via the env, or fall back to the docker-compose
+# default the PAS Axum project ships.
+database:
+  uri: "{{ get_env(name="DATABASE_URL", default="postgres://pas:pas_dev_password@localhost:5432/pas") }}"
+  enable_logging: false
+  connect_timeout: 5000
+  idle_timeout: 5000
+  min_connections: 1
+  max_connections: 10
+  auto_migrate: false  # the PAS Axum binary applies migrations
+  dangerously_truncate: false
+  dangerously_recreate: false
+
+mailer:
+  smtp:
+    enable: false
+
+queue:
+  kind: Null  # no background queue; patient-administration-system-frontend is read-mostly
+
+workers:
+  mode: BackgroundQueue

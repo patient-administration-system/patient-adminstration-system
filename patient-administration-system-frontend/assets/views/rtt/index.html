@@ -1,0 +1,72 @@
+{% extends "layouts/main.html" %}
+{% block title %}PAS — RTT cockpit{% endblock %}
+
+{% block content %}
+
+<div class="panel" role="region" aria-label="RTT cockpit">
+  <h2>RTT cockpit
+    <span style="margin-left:auto;color:var(--muted);font-weight:400;font-size:12px;">
+      {{ total_pathways }} active pathway{% if total_pathways != 1 %}s{% endif %}
+      {% if breach_count > 0 %}
+        · <span class="badge" data-status="error" aria-label="Breaching pathways">{{ breach_count }} breaching</span>
+      {% else %}
+        · <span class="badge" data-status="ok" aria-label="All pathways within threshold">all within threshold</span>
+      {% endif %}
+    </span>
+  </h2>
+
+  {% if pathways | length == 0 %}
+    <div class="alert" role="status">No active RTT pathways — start one via <code class="code">POST /api/rtt/start</code> on the PAS Axum server.</div>
+  {% else %}
+    <table class="data-table" aria-label="RTT pathways">
+      <thead class="data-table-head">
+        <tr class="data-table-row">
+          <th class="data-table-th" scope="col">Patient</th>
+          <th class="data-table-th" scope="col">Service</th>
+          <th class="data-table-th" scope="col">Status</th>
+          <th class="data-table-th num" scope="col">Weeks waiting</th>
+          <th class="data-table-th num" scope="col">Breach @</th>
+          <th class="data-table-th" scope="col">Breach?</th>
+        </tr>
+      </thead>
+      <tbody class="data-table-body">
+        {% for p in pathways %}
+        <tr class="data-table-row">
+          <td class="data-table-td"><a href="/patients/{{ p.patient_id }}">{{ p.patient_given }} <strong>{{ p.patient_family }}</strong></a></td>
+          <td class="data-table-td"><strong>{{ p.target_service }}</strong></td>
+          <td class="data-table-td">
+            {% if p.status == "active" %}
+              <span class="badge" data-status="ok" aria-label="Pathway status">active</span>
+            {% elif p.status == "paused" %}
+              <span class="badge" data-status="warn" aria-label="Pathway status">paused</span>
+            {% else %}
+              <span class="badge" aria-label="Pathway status">{{ p.status }}</span>
+            {% endif %}
+          </td>
+          <td class="data-table-td num">
+            {% if p.is_breaching %}
+              <span class="badge" data-status="error" aria-label="Weeks waiting">{{ p.weeks_waiting }}</span>
+            {% else %}
+              {{ p.weeks_waiting }}
+            {% endif %}
+          </td>
+          <td class="data-table-td num">{{ p.breach_weeks }}</td>
+          <td class="data-table-td">
+            {% if p.is_breaching %}
+              <span class="badge" data-status="error" aria-label="Breaching">breaching</span>
+            {% else %}
+              <span class="badge" data-status="ok" aria-label="Within threshold">ok</span>
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% endif %}
+
+  <p style="margin-top:16px;">
+    <a href="/dashboard">&larr; Back to dashboard</a>
+  </p>
+</div>
+
+{% endblock %}

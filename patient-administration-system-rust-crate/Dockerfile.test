@@ -1,0 +1,15 @@
+# syntax=docker/dockerfile:1
+#
+# Test image: single-stage Rust toolchain used by CI/CD to run the unit-test
+# suite. Builds and runs `cargo test --lib` against the workspace.
+
+FROM rust:1-slim
+WORKDIR /app
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+        pkg-config \
+        libssl-dev \
+        ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
+COPY . .
+CMD ["cargo", "test", "--lib"]

@@ -1,0 +1,65 @@
+{% extends "layouts/main.html" %}
+{% block title %}PAS — Book appointment{% endblock %}
+
+{% block content %}
+
+<div class="panel" role="region" aria-label="Book appointment">
+  <h2>Book appointment</h2>
+
+  {% if error %}
+    <div class="alert" role="alert" data-status="error" style="color:var(--error);font-style:normal;">
+      <strong>Couldn't book:</strong> {{ error }}
+    </div>
+  {% endif %}
+
+  {% if result %}
+    <div class="alert" role="status" data-status="ok" style="color:var(--ok);font-style:normal;">
+      <strong>Booked</strong> — appointment <code class="code">{{ result.appointment_id }}</code> ·
+      <a href="/patients/{{ result.patient_id }}">view patient</a> · status <span class="badge" data-status="ok">{{ result.status }}</span>
+    </div>
+  {% endif %}
+
+  {% if slots | length == 0 %}
+    <div class="alert" role="status">No free slots in the next {{ horizon_days }} days — generate some via <code class="code">POST /api/schedules/{id}/slots/bulk</code> on the PAS Axum server.</div>
+  {% elif patients | length == 0 %}
+    <div class="alert" role="status">No patients yet — create one via <code class="code">POST /api/patients</code>.</div>
+  {% else %}
+    <form class="form" method="post" action="/appointments/new" style="margin-top:16px;display:grid;gap:12px;max-width:520px;">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+
+      <div class="field">
+        <label class="label" for="slot_id" style="display:block;font-size:13px;color:var(--muted);">Slot</label>
+        <select class="select" id="slot_id" name="slot_id" required style="width:100%;padding:6px 8px;">
+          {% for s in slots %}
+            <option value="{{ s.id }}">{{ s.label }}</option>
+          {% endfor %}
+        </select>
+        <span style="font-size:12px;color:var(--muted);">{{ slots | length }} free slot{% if slots | length != 1 %}s{% endif %} across all active schedules in the next {{ horizon_days }} days.</span>
+      </div>
+
+      <div class="field">
+        <label class="label" for="patient_id" style="display:block;font-size:13px;color:var(--muted);">Patient</label>
+        <select class="select" id="patient_id" name="patient_id" required style="width:100%;padding:6px 8px;">
+          {% for p in patients %}
+            <option value="{{ p.id }}">{{ p.family }}, {{ p.given }}{% if p.birth_date %} · {{ p.birth_date }}{% endif %}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div>
+        <button class="submit-input button" type="submit" style="padding:8px 16px;background:var(--accent);color:white;border:none;border-radius:4px;cursor:pointer;">
+          Book slot
+        </button>
+        <span style="margin-left:8px;color:var(--muted);font-size:12px;">
+          Submits to <code class="code">POST /api/slots/{slot_id}/book</code>.
+        </span>
+      </div>
+    </form>
+  {% endif %}
+
+  <p style="margin-top:16px;">
+    <a href="/dashboard">&larr; Back to dashboard</a>
+  </p>
+</div>
+
+{% endblock %}

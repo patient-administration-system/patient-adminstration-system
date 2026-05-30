@@ -1,0 +1,25 @@
+{# Lily Design System: data-table family + badge. #}
+{% if breaches | length == 0 %}
+  <div class="alert" role="status">No active pathways exceeding their breach threshold.</div>
+{% else %}
+  <table class="data-table" aria-label="RTT breaches">
+    <thead class="data-table-head">
+      <tr class="data-table-row">
+        <th class="data-table-th" scope="col">Service</th>
+        <th class="data-table-th" scope="col">Patient</th>
+        <th class="data-table-th num" scope="col">Weeks waiting</th>
+        <th class="data-table-th num" scope="col">Breach @</th>
+      </tr>
+    </thead>
+    <tbody class="data-table-body">
+      {% for b in breaches %}
+      <tr class="data-table-row">
+        <td class="data-table-td"><strong>{{ b.target_service }}</strong></td>
+        <td class="data-table-td"><code class="code">{{ b.patient_id_short }}</code></td>
+        <td class="data-table-td num"><span class="badge" data-status="error" aria-label="Weeks waiting">{{ b.weeks_waiting }}</span></td>
+        <td class="data-table-td num">{{ b.breach_weeks }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% endif %}

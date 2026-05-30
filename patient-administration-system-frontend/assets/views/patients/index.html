@@ -1,0 +1,39 @@
+{% extends "layouts/main.html" %}
+{% block title %}PAS — Patients{% endblock %}
+
+{% block content %}
+
+<div class="panel" role="region" aria-label="Patient list">
+  <h2>Patients <span style="margin-left:auto;color:var(--muted);font-weight:400;">{{ patients | length }} active</span></h2>
+
+  {% if patients | length == 0 %}
+    <div class="alert" role="status">No patients yet — create one via <code class="code">POST /api/patients</code> on the PAS Axum server.</div>
+  {% else %}
+    <table class="data-table" aria-label="Patients">
+      <thead class="data-table-head">
+        <tr class="data-table-row">
+          <th class="data-table-th" scope="col">Family</th>
+          <th class="data-table-th" scope="col">Given</th>
+          <th class="data-table-th" scope="col">Gender</th>
+          <th class="data-table-th" scope="col">Birth date</th>
+          <th class="data-table-th" scope="col">Active</th>
+        </tr>
+      </thead>
+      <tbody class="data-table-body">
+        {% for p in patients %}
+        <tr class="data-table-row">
+          <td class="data-table-td"><a href="/patients/{{ p.id }}"><strong>{{ p.family }}</strong></a></td>
+          <td class="data-table-td">{{ p.given }}</td>
+          <td class="data-table-td">{{ p.gender }}</td>
+          <td class="data-table-td">{{ p.birth_date | default(value="—") }}</td>
+          <td class="data-table-td">
+            {% if p.active %}<span class="badge" data-status="ok" aria-label="Active">active</span>{% else %}<span class="badge" aria-label="Inactive">inactive</span>{% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% endif %}
+</div>
+
+{% endblock %}

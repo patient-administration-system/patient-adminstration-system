@@ -1,0 +1,60 @@
+{% extends "layouts/main.html" %}
+{% block title %}PAS — Ward {{ ward.name }}{% endblock %}
+
+{% block content %}
+
+<div class="panel" role="region" aria-label="Ward header">
+  <h2>{{ ward.name }}
+    <span style="margin-left:auto;color:var(--muted);font-weight:400;font-size:12px;">
+      <code class="code">{{ ward.code }}</code>
+      · {{ occupied_beds }} of {{ total_beds }} bed{% if total_beds != 1 %}s{% endif %} occupied
+    </span>
+  </h2>
+
+  {% if beds | length == 0 %}
+    <div class="alert" role="status">This ward has no beds yet — bootstrap one via <code class="code">POST /api/beds</code> on the PAS Axum server.</div>
+  {% else %}
+    <table class="data-table" aria-label="Beds in ward">
+      <thead class="data-table-head">
+        <tr class="data-table-row">
+          <th class="data-table-th" scope="col">Room</th>
+          <th class="data-table-th" scope="col">Bed</th>
+          <th class="data-table-th" scope="col">Status</th>
+          <th class="data-table-th" scope="col">Current patient</th>
+        </tr>
+      </thead>
+      <tbody class="data-table-body">
+        {% for b in beds %}
+        <tr class="data-table-row">
+          <td class="data-table-td"><code class="code">{{ b.room_code }}</code></td>
+          <td class="data-table-td"><strong>{{ b.name }}</strong> <span style="color:var(--muted);font-size:12px;">{{ b.code }}</span></td>
+          <td class="data-table-td">
+            {% if b.status == "occupied" %}
+              <span class="badge" data-status="warn" aria-label="Bed status">occupied</span>
+            {% elif b.status == "available" %}
+              <span class="badge" data-status="ok" aria-label="Bed status">available</span>
+            {% elif b.status == "out_of_service" %}
+              <span class="badge" data-status="error" aria-label="Bed status">out of service</span>
+            {% else %}
+              <span class="badge" aria-label="Bed status">{{ b.status }}</span>
+            {% endif %}
+          </td>
+          <td class="data-table-td">
+            {% if b.occupant_patient_id %}
+              <a href="/patients/{{ b.occupant_patient_id }}">{{ b.occupant_given }} <strong>{{ b.occupant_family }}</strong></a>
+            {% else %}
+              —
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% endif %}
+
+  <p style="margin-top:16px;">
+    <a href="/dashboard">&larr; Back to dashboard</a>
+  </p>
+</div>
+
+{% endblock %}
